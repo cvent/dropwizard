@@ -48,10 +48,10 @@ public class Configuration {
     @JsonProperty
     private HttpConfiguration http = new HttpConfiguration();
 
-    @Valid
-    @NotNull
-    @JsonProperty
-    private LoggingConfiguration logging = new LoggingConfiguration();
+    // @Valid
+    // @NotNull
+    // @JsonProperty
+    // private LoggingConfiguration logging = new LoggingConfiguration();
 
     /**
      * Returns the HTTP-specific section of the configuration file.
@@ -69,27 +69,27 @@ public class Configuration {
         this.http = config;
     }
 
-    /**
-     * Returns the logging-specific section of the configuration file.
-     *
-     * @return logging-specific configuration parameters
-     */
-    public LoggingConfiguration getLoggingConfiguration() {
-        return logging;
-    }
+    // /**
+    //  * Returns the logging-specific section of the configuration file.
+    //  *
+    //  * @return logging-specific configuration parameters
+    //  */
+    // public LoggingConfiguration getLoggingConfiguration() {
+    //     return logging;
+    // }
 
-    /**
-     * Sets the logging-specific section of the configuration file.
-     */
-    public void setLoggingConfiguration(LoggingConfiguration config) {
-        this.logging = config;
-    }
+    // /**
+    //  * Sets the logging-specific section of the configuration file.
+    //  */
+    // public void setLoggingConfiguration(LoggingConfiguration config) {
+    //     this.logging = config;
+    // }
 
     @Override
     public String toString() {
         return Objects.toStringHelper(this)
                       .add("http", http)
-                      .add("logging", logging)
+                      // .add("logging", logging)
                       .toString();
     }
 }

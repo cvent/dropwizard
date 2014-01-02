@@ -5,7 +5,7 @@ import com.yammer.dropwizard.cli.ServerCommand;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
-import com.yammer.dropwizard.config.LoggingFactory;
+// import com.yammer.dropwizard.config.LoggingFactory;
 import com.yammer.dropwizard.util.Generics;
 
 /**
@@ -14,10 +14,10 @@ import com.yammer.dropwizard.util.Generics;
  * @param <T> the type of configuration class for this service
  */
 public abstract class Service<T extends Configuration> {
-    static {
-        // make sure spinning up Hibernate Validator doesn't yell at us
-        LoggingFactory.bootstrap();
-    }
+    // static {
+    //     // make sure spinning up Hibernate Validator doesn't yell at us
+    //     LoggingFactory.bootstrap();
+    // }
 
     /**
      * Returns the {@link Class} of the configuration class type parameter.

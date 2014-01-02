@@ -16,11 +16,11 @@ public class ConfigurationTest {
                 .isNotNull();
     }
 
-    @Test
-    public void hasALoggingConfiguration() throws Exception {
-        assertThat(configuration.getLoggingConfiguration())
-                .isNotNull();
-    }
+    // @Test
+    // public void hasALoggingConfiguration() throws Exception {
+    //     assertThat(configuration.getLoggingConfiguration())
+    //             .isNotNull();
+    // }
 
     @Test
     public void ensureConfigSerializable() throws Exception {

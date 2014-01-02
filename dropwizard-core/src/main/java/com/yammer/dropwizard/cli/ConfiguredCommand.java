@@ -51,10 +51,10 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
         final T configuration = parseConfiguration(namespace.getString("file"),
                                                    getConfigurationClass(),
                                                    bootstrap.getObjectMapperFactory().copy());
-        if (configuration != null) {
-            new LoggingFactory(configuration.getLoggingConfiguration(),
-                               bootstrap.getName()).configure();
-        }
+        // if (configuration != null) {
+        //     new LoggingFactory(configuration.getLoggingConfiguration(),
+        //                        bootstrap.getName()).configure();
+        // }
         run((Bootstrap<T>) bootstrap, namespace, configuration);
     }
 
