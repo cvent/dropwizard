@@ -26,22 +26,22 @@
         <dependency>
             <groupId>com.yammer.dropwizard</groupId>
             <artifactId>dropwizard-core</artifactId>
-            <version>0.6.2.2-SNAPSHOT</version>
+            <version>0.6.2.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.yammer.dropwizard</groupId>
             <artifactId>dropwizard-hibernate</artifactId>
-            <version>0.6.2.2-SNAPSHOT</version>
+            <version>0.6.2.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.yammer.dropwizard</groupId>
             <artifactId>dropwizard-migrations</artifactId>
-            <version>0.6.2.2-SNAPSHOT</version>
+            <version>0.6.2.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.yammer.dropwizard</groupId>
             <artifactId>dropwizard-views</artifactId>
-            <version>0.6.2.2-SNAPSHOT</version>
+            <version>0.6.2.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -51,12 +51,12 @@
         <dependency>
             <groupId>com.yammer.dropwizard</groupId>
             <artifactId>dropwizard-auth</artifactId>
-            <version>0.6.2.2-SNAPSHOT</version>
+            <version>0.6.2.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.yammer.dropwizard</groupId>
             <artifactId>dropwizard-testing</artifactId>
-            <version>0.6.2.2-SNAPSHOT</version>
+            <version>0.6.2.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
