@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.yammer.dropwizard</groupId>
         <artifactId>dropwizard-parent</artifactId>
-        <version>0.6.2</version>
+        <version>0.6.2.1</version>
     </parent>
 
     <artifactId>dropwizard-testing</artifactId>
@@ -43,4 +43,8 @@
             <version>2.0M10</version>
         </dependency>
     </dependencies>
+
+  <scm>
+    <tag>v0.6.2.1</tag>
+  </scm>
 </project>
