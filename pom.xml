@@ -7,7 +7,7 @@
 
     <groupId>com.yammer.dropwizard</groupId>
     <artifactId>dropwizard-parent</artifactId>
-    <version>0.6.2</version>
+    <version>0.6.2.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Dropwizard Project</name>
     <url>http://dropwizard.codahale.com/</url>
@@ -55,46 +55,28 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git://github.com/codahale/dropwizard.git</connection>
-        <developerConnection>scm:git:git@github.com:codahale/dropwizard.git</developerConnection>
-        <url>http://github.com/codahale/dropwizard/</url>
+        <connection>scm:git:git@github.com:cvent/dropwizard.git</connection>
+        <developerConnection>scm:git:git@github.com:cvent/dropwizard.git</developerConnection>
+        <url>http://github.com/cvent/dropwizard/</url>
       <tag>v0.6.2</tag>
   </scm>
 
     <issueManagement>
         <system>github</system>
-        <url>http://github.com/codahale/dropwizard/issues#issue/</url>
+        <url>http://github.com/cvent/dropwizard/issues#issue/</url>
     </issueManagement>
 
-    <repositories>
-        <repository>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
     <distributionManagement>
-        <snapshotRepository>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
         <repository>
-            <id>sonatype-nexus-staging</id>
-            <name>Nexus Release Repository</name>
-            <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>cvent-repo</id>
+            <name>Cvent Releases Repo</name>
+            <url>http://hq04hqnug001:8081/nexus/content/repositories/releases/</url>
         </repository>
-        <site>
-            <id>repo.codahale.com</id>
-            <url>scp://codahale.com/home/codahale/dropwizard.codahale.com/maven/</url>
-        </site>
+        <snapshotRepository>
+            <id>cvent-repo</id>
+            <name>Cvent Snapshots Repo</name>
+            <url>http://hq04hqnug001:8081/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
     </distributionManagement>
 
     <profiles>
