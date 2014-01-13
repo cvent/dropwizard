@@ -6,6 +6,7 @@ import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
 // import com.yammer.dropwizard.config.LoggingFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 import com.yammer.dropwizard.util.Generics;
 
 /**
@@ -54,6 +55,8 @@ public abstract class Service<T extends Configuration> {
      * @throws Exception if something goes wrong
      */
     public final void run(String[] arguments) throws Exception {
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
         final Bootstrap<T> bootstrap = new Bootstrap<T>(this);
         bootstrap.addCommand(new ServerCommand<T>(this));
         initialize(bootstrap);
