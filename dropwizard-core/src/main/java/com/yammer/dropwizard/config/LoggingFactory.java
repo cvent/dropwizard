@@ -24,105 +24,106 @@ import static com.yammer.dropwizard.config.LoggingConfiguration.*;
 
 public class LoggingFactory {
     public static void bootstrap() {
-        // initially configure for WARN+ console logging
-        final ConsoleConfiguration console = new ConsoleConfiguration();
-        console.setEnabled(true);
-        console.setTimeZone(TimeZone.getDefault());
-        console.setThreshold(Level.WARN);
-
-        final Logger root = getCleanRoot();
-        root.addAppender(LogbackFactory.buildConsoleAppender(console,
-                                                             root.getLoggerContext(),
-                                                             Optional.<String>absent()));
-    }
-
-    private final LoggingConfiguration config;
-    private final String name;
-
-    public LoggingFactory(LoggingConfiguration config, String name) {
-        this.config = config;
-        this.name = name;
-    }
-
-    public void configure() {
         hijackJDKLogging();
+        // // initially configure for WARN+ console logging
+        // final ConsoleConfiguration console = new ConsoleConfiguration();
+        // console.setEnabled(true);
+        // console.setTimeZone(TimeZone.getDefault());
+        // console.setThreshold(Level.WARN);
 
-        final Logger root = configureLevels();
-
-        final ConsoleConfiguration console = config.getConsoleConfiguration();
-        if (console.isEnabled()) {
-            root.addAppender(AsyncAppender.wrap(LogbackFactory.buildConsoleAppender(console,
-                                                                                    root.getLoggerContext(),
-                                                                                    console.getLogFormat())));
-        }
-
-        final FileConfiguration file = config.getFileConfiguration();
-        if (file.isEnabled()) {
-            root.addAppender(AsyncAppender.wrap(LogbackFactory.buildFileAppender(file,
-                                                                                 root.getLoggerContext(),
-                                                                                 file.getLogFormat())));
-        }
-
-        final SyslogConfiguration syslog = config.getSyslogConfiguration();
-        if (syslog.isEnabled()) {
-            root.addAppender(AsyncAppender.wrap(LogbackFactory.buildSyslogAppender(syslog,
-                                                                                   root.getLoggerContext(),
-                                                                                   name,
-                                                                                   syslog.getLogFormat())));
-        }
-
-
-
-        final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-        try {
-            final ObjectName objectName = new ObjectName("com.yammer:type=Logging");
-            if (!server.isRegistered(objectName)) {
-                server.registerMBean(new JMXConfigurator(root.getLoggerContext(),
-                                                         server,
-                                                         objectName),
-                                     objectName);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        configureInstrumentation(root);
+        // final Logger root = getCleanRoot();
+        // root.addAppender(LogbackFactory.buildConsoleAppender(console,
+        //                                                      root.getLoggerContext(),
+        //                                                      Optional.<String>absent()));
     }
 
-    private void configureInstrumentation(Logger root) {
-        final InstrumentedAppender appender = new InstrumentedAppender();
-        appender.setContext(root.getLoggerContext());
-        appender.start();
-        root.addAppender(appender);
-    }
+    // private final LoggingConfiguration config;
+    // private final String name;
 
-    private void hijackJDKLogging() {
+    // public LoggingFactory(LoggingConfiguration config, String name) {
+    //     this.config = config;
+    //     this.name = name;
+    // }
+
+    // public void configure() {
+    //     hijackJDKLogging();
+
+    //     final Logger root = configureLevels();
+
+    //     final ConsoleConfiguration console = config.getConsoleConfiguration();
+    //     if (console.isEnabled()) {
+    //         root.addAppender(AsyncAppender.wrap(LogbackFactory.buildConsoleAppender(console,
+    //                                                                                 root.getLoggerContext(),
+    //                                                                                 console.getLogFormat())));
+    //     }
+
+    //     final FileConfiguration file = config.getFileConfiguration();
+    //     if (file.isEnabled()) {
+    //         root.addAppender(AsyncAppender.wrap(LogbackFactory.buildFileAppender(file,
+    //                                                                              root.getLoggerContext(),
+    //                                                                              file.getLogFormat())));
+    //     }
+
+    //     final SyslogConfiguration syslog = config.getSyslogConfiguration();
+    //     if (syslog.isEnabled()) {
+    //         root.addAppender(AsyncAppender.wrap(LogbackFactory.buildSyslogAppender(syslog,
+    //                                                                                root.getLoggerContext(),
+    //                                                                                name,
+    //                                                                                syslog.getLogFormat())));
+    //     }
+
+
+
+    //     final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+    //     try {
+    //         final ObjectName objectName = new ObjectName("com.yammer:type=Logging");
+    //         if (!server.isRegistered(objectName)) {
+    //             server.registerMBean(new JMXConfigurator(root.getLoggerContext(),
+    //                                                      server,
+    //                                                      objectName),
+    //                                  objectName);
+    //         }
+    //     } catch (Exception e) {
+    //         throw new RuntimeException(e);
+    //     }
+
+    //     configureInstrumentation(root);
+    // }
+
+    // private void configureInstrumentation(Logger root) {
+    //     final InstrumentedAppender appender = new InstrumentedAppender();
+    //     appender.setContext(root.getLoggerContext());
+    //     appender.start();
+    //     root.addAppender(appender);
+    // }
+
+    private static void hijackJDKLogging() {
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
     }
 
-    private Logger configureLevels() {
-        final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-        root.getLoggerContext().reset();
+    // private Logger configureLevels() {
+    //     final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+    //     root.getLoggerContext().reset();
 
-        final LevelChangePropagator propagator = new LevelChangePropagator();
-        propagator.setContext(root.getLoggerContext());
-        propagator.setResetJUL(true);
+    //     final LevelChangePropagator propagator = new LevelChangePropagator();
+    //     propagator.setContext(root.getLoggerContext());
+    //     propagator.setResetJUL(true);
 
-        root.getLoggerContext().addListener(propagator);
+    //     root.getLoggerContext().addListener(propagator);
 
-        root.setLevel(config.getLevel());
+    //     root.setLevel(config.getLevel());
 
-        for (Map.Entry<String, Level> entry : config.getLoggers().entrySet()) {
-            ((Logger) LoggerFactory.getLogger(entry.getKey())).setLevel(entry.getValue());
-        }
+    //     for (Map.Entry<String, Level> entry : config.getLoggers().entrySet()) {
+    //         ((Logger) LoggerFactory.getLogger(entry.getKey())).setLevel(entry.getValue());
+    //     }
 
-        return root;
-    }
+    //     return root;
+    // }
 
-    private static Logger getCleanRoot() {
-        final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-        root.detachAndStopAllAppenders();
-        return root;
-    }
+    // private static Logger getCleanRoot() {
+    //     final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+    //     root.detachAndStopAllAppenders();
+    //     return root;
+    // }
 }

@@ -5,7 +5,7 @@ import com.yammer.dropwizard.cli.ServerCommand;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
-// import com.yammer.dropwizard.config.LoggingFactory;
+import com.yammer.dropwizard.config.LoggingFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import com.yammer.dropwizard.util.Generics;
 
@@ -15,10 +15,10 @@ import com.yammer.dropwizard.util.Generics;
  * @param <T> the type of configuration class for this service
  */
 public abstract class Service<T extends Configuration> {
-    // static {
-    //     // make sure spinning up Hibernate Validator doesn't yell at us
-    //     LoggingFactory.bootstrap();
-    // }
+    static {
+        // make sure spinning up Hibernate Validator doesn't yell at us
+        LoggingFactory.bootstrap();
+    }
 
     /**
      * Returns the {@link Class} of the configuration class type parameter.
@@ -55,8 +55,6 @@ public abstract class Service<T extends Configuration> {
      * @throws Exception if something goes wrong
      */
     public final void run(String[] arguments) throws Exception {
-        SLF4JBridgeHandler.removeHandlersForRootLogger();
-        SLF4JBridgeHandler.install();
         final Bootstrap<T> bootstrap = new Bootstrap<T>(this);
         bootstrap.addCommand(new ServerCommand<T>(this));
         initialize(bootstrap);
