@@ -10,9 +10,11 @@ public class DropwizardResourceConfig extends ScanningResourceConfig {
         getFeatures().put(FEATURE_DISABLE_WADL, Boolean.TRUE);
         if (!testOnly) {
             // create a subclass to pin it to Throwable
-            getSingletons().add(new LoggingExceptionMapper<Throwable>() {});
-            getSingletons().add(new InvalidEntityExceptionMapper());
-            getSingletons().add(new JsonProcessingExceptionMapper());
+// Removed default mappers that force responses in HTML format instead of JSON            
+//            getSingletons().add(new LoggingExceptionMapper<Throwable>() {});
+//            getSingletons().add(new InvalidEntityExceptionMapper());
+//            getSingletons().add(new JsonProcessingExceptionMapper());
+            getSingletons().add(new UnhandledExceptionMapper());
         }
         getClasses().add(InstrumentedResourceMethodDispatchAdapter.class);
         getClasses().add(CacheControlledResourceMethodDispatchAdapter.class);
