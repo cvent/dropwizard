@@ -35,12 +35,12 @@ public class UnhandledExcpetionToJSONMapper implements ExceptionMapper<Exception
         LOGGER.error("Unhandled exception", exception);
 
         if (exception instanceof NotFoundException) {
-            ResponseBuilder builder = Response.status(Status.INTERNAL_SERVER_ERROR)
+            ResponseBuilder builder = Response.status(Status.NOT_FOUND)
                     .entity(notFoundJSON(((NotFoundException) exception).getNotFoundUri()))
                     .type(MediaType.APPLICATION_JSON);
             return builder.build();
         } else if (exception instanceof InvalidEntityException) {
-            ResponseBuilder builder = Response.status(Status.INTERNAL_SERVER_ERROR)
+            ResponseBuilder builder = Response.status(Status.BAD_REQUEST)
                     .entity(invalidEntityJSON((InvalidEntityException) exception))
                     .type(MediaType.APPLICATION_JSON);
             return builder.build();
