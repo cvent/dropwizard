@@ -14,7 +14,6 @@ import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import com.google.common.collect.ImmutableList;
 
 @Provider
 public class InvalidEntityExceptionMapper implements ExceptionMapper<InvalidEntityException> {
@@ -26,15 +25,6 @@ public class InvalidEntityExceptionMapper implements ExceptionMapper<InvalidEnti
 
     private final UnbrandedErrorHandler errorHandler = new UnbrandedErrorHandler();
 
-    public class InvalidEntityExceptionRepresentation {
-        private  ImmutableList<String> errors;
-        public void setErrors(ImmutableList<String> errors) {
-            this.errors = errors;
-        }
-        public ImmutableList<String> getErrors() {
-            return errors;
-        }
-    }
 
     @Override
     public Response toResponse(InvalidEntityException exception) {
