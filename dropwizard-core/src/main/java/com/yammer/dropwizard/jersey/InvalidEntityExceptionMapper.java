@@ -26,16 +26,16 @@ public class InvalidEntityExceptionMapper implements ExceptionMapper<InvalidEnti
 
     @Override
     public Response toResponse(InvalidEntityException exception) {
-        final StringWriter writer = new StringWriter(4096);
-        try {
-            errorHandler.writeValidationErrorPage(request, writer, exception);
-        } catch (IOException e) {
-            LOGGER.warn("Unable to generate error page", e);
-        }
+        //final StringWriter writer = new StringWriter(4096);
+        //try {
+            //errorHandler.writeValidationErrorPage(request, writer, exception);
+        //} catch (IOException e) {
+         //   LOGGER.warn("Unable to generate error page", e);
+        //}
 
         return Response.status(UNPROCESSABLE_ENTITY)
-                       .type(MediaType.TEXT_HTML_TYPE)
-                       .entity(writer.toString())
+                       .type(MediaType.APPLICATION_JSON)
+                       .entity(exception)
                        .build();
     }
 }
