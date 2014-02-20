@@ -5,11 +5,11 @@
     <parent>
         <groupId>com.yammer.dropwizard</groupId>
         <artifactId>dropwizard-parent</artifactId>
-        <version>0.6.2.13</version>
+        <version>0.6.2.14-SNAPSHOT</version>
     </parent>
 
     <artifactId>dropwizard-testing</artifactId>
-    <version>0.6.2.13</version>
+    <version>0.6.2.14-SNAPSHOT</version>
     <name>Dropwizard Test Helpers</name>
 
     <dependencies>
