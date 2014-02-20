@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>dropwizard-views</artifactId>
-  <version>0.6.2.9</version>
+    <version>0.6.2.13-SNAPSHOT</version>
     <name>Dropwizard Views</name>
     
     <dependencies>
@@ -29,8 +29,4 @@
             <version>0.8.10</version>
         </dependency>
     </dependencies>
-
-  <scm>
-    <tag>v0.6.2.9</tag>
-  </scm>
 </project>

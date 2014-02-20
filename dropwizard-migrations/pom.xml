@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>dropwizard-migrations</artifactId>
-  <version>0.6.2.9</version>
+    <version>0.6.2.13-SNAPSHOT</version>
     <name>Dropwizard Migrations</name>
 
     <dependencies>
@@ -35,8 +35,4 @@
             </exclusions>
         </dependency>
     </dependencies>
-
-  <scm>
-    <tag>v0.6.2.9</tag>
-  </scm>
 </project>

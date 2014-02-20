@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>dropwizard-core</artifactId>
-  <version>0.6.2.9</version>
+    <version>0.6.2.13-SNAPSHOT</version>
     <name>Dropwizard</name>
 
     <properties>
@@ -179,7 +179,4 @@
         </testResources>
     </build>
 
-  <scm>
-    <tag>v0.6.2.9</tag>
-  </scm>
 </project>
