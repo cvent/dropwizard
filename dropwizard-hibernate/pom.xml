@@ -5,10 +5,11 @@
     <parent>
         <groupId>com.yammer.dropwizard</groupId>
         <artifactId>dropwizard-parent</artifactId>
-        <version>0.6.2.10</version>
+        <version>0.6.2.11-SNAPSHOT</version>
     </parent>
 
     <artifactId>dropwizard-hibernate</artifactId>
+  <version>0.6.2.9</version>
     <name>Dropwizard Hibernate Support</name>
 
     <dependencies>
@@ -67,6 +68,6 @@
     </dependencies>
 
   <scm>
-    <tag>v0.6.2.10</tag>
+    <tag>v0.6.2.9</tag>
   </scm>
 </project>
