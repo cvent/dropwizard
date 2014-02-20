@@ -4,6 +4,7 @@ import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
+import javax.ws.rs.core.MediaType;
 
 @Provider
 public class ConstraintViolationExceptionMapper implements ExceptionMapper<ConstraintViolationException> {
@@ -12,9 +13,9 @@ public class ConstraintViolationExceptionMapper implements ExceptionMapper<Const
     @Override
     public Response toResponse(ConstraintViolationException exception) {
         final ValidationErrorMessage message = new ValidationErrorMessage(exception.getConstraintViolations());
-
+        //have constraint violations default to JSON
         return Response.status(UNPROCESSABLE_ENTITY)
-                       .entity(message)
+                       .entity(message).type(MediaType.APPLICATION_JSON)
                        .build();
     }
 }
