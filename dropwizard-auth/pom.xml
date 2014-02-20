@@ -5,11 +5,11 @@
     <parent>
         <groupId>com.yammer.dropwizard</groupId>
         <artifactId>dropwizard-parent</artifactId>
-        <version>0.6.2.12</version>
+        <version>0.6.2.13-SNAPSHOT</version>
     </parent>
 
     <artifactId>dropwizard-auth</artifactId>
-  <version>0.6.2.12</version>
+  <version>0.6.2.9</version>
     <name>Dropwizard Authentication</name>
 
     <dependencies>
@@ -33,6 +33,6 @@
     </dependencies>
 
   <scm>
-    <tag>v0.6.2.12</tag>
+    <tag>v0.6.2.9</tag>
   </scm>
 </project>
