@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableList;
 import com.sun.jersey.api.NotFoundException;
 import com.yammer.dropwizard.validation.InvalidEntityException;
 import java.net.URI;
+import javax.ws.rs.WebApplicationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +45,16 @@ public class UnhandledExcpetionToJSONMapper implements ExceptionMapper<Exception
                     .entity(invalidEntityJSON((InvalidEntityException) exception))
                     .type(MediaType.APPLICATION_JSON);
             return builder.build();
+        } else if (exception instanceof WebApplicationException) {
+            WebApplicationException e = (WebApplicationException) exception;
+            if (e.getResponse() != null) {
+                return e.getResponse();
+            } else {
+                ResponseBuilder builder = Response.status(Status.INTERNAL_SERVER_ERROR)
+                        .entity(defaultJSON(exception))
+                        .type(MediaType.APPLICATION_JSON);
+                return builder.build();
+            }
         } else {
             ResponseBuilder builder = Response.status(Status.INTERNAL_SERVER_ERROR)
                     .entity(defaultJSON(exception))
