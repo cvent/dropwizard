@@ -5,11 +5,11 @@
     <parent>
         <groupId>com.yammer.dropwizard</groupId>
         <artifactId>dropwizard-parent</artifactId>
-        <version>0.6.2.15</version>
+        <version>0.6.2.16-SNAPSHOT</version>
     </parent>
 
     <artifactId>dropwizard-jdbi</artifactId>
-    <version>0.6.2.15</version>
+    <version>0.6.2.16-SNAPSHOT</version>
     <name>Dropwizard JDBI Support</name>
 
     <dependencies>
