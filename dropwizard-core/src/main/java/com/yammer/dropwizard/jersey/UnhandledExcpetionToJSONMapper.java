@@ -48,7 +48,10 @@ public class UnhandledExcpetionToJSONMapper implements ExceptionMapper<Exception
         } else if (exception instanceof WebApplicationException) {
             WebApplicationException e = (WebApplicationException) exception;
             if (e.getResponse() != null) {
-                return e.getResponse();
+                return Response.fromResponse(e.getResponse())
+                        .entity(defaultJSON(exception))
+                        .type(MediaType.APPLICATION_JSON)
+                        .build();
             } else {
                 ResponseBuilder builder = Response.status(Status.INTERNAL_SERVER_ERROR)
                         .entity(defaultJSON(exception))
