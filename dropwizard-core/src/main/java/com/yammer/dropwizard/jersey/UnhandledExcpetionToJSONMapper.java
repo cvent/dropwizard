@@ -15,6 +15,7 @@ import com.sun.jersey.api.NotFoundException;
 import com.yammer.dropwizard.validation.InvalidEntityException;
 import java.net.URI;
 import javax.ws.rs.WebApplicationException;
+import org.eclipse.jetty.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,7 +90,17 @@ public class UnhandledExcpetionToJSONMapper implements ExceptionMapper<Exception
     }
 
     private String defaultJSON(final Exception exception) {
-        ErrorInfo errorInfo = new ErrorInfo(exception.getMessage());
+        ErrorInfo errorInfo;
+        if (exception.getMessage() == null && exception instanceof WebApplicationException) {
+            WebApplicationException e = (WebApplicationException) exception;
+            if (e.getResponse() != null) {
+                errorInfo = new ErrorInfo(HttpStatus.getMessage(e.getResponse().getStatus()));
+            } else {
+                return null;
+            }
+        } else {
+            errorInfo = new ErrorInfo(exception.getMessage());
+        }
 
         try {
             return MAPPER.writeValueAsString(errorInfo);
