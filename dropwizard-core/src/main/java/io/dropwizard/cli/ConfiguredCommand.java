@@ -68,10 +68,10 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
                                            bootstrap.getObjectMapper());
 
         try {
-            if (configuration != null) {
-                configuration.getLoggingFactory().configure(bootstrap.getMetricRegistry(),
-                                                            bootstrap.getApplication().getName());
-            }
+//            if (configuration != null) {
+//                configuration.getLoggingFactory().configure(bootstrap.getMetricRegistry(),
+//                                                            bootstrap.getApplication().getName());
+//            }
 
             run((Bootstrap<T>) bootstrap, namespace, configuration);
         } finally {
