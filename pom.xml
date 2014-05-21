@@ -7,7 +7,7 @@
 
     <groupId>io.dropwizard</groupId>
     <artifactId>dropwizard-parent</artifactId>
-    <version>0.7.0.1</version>
+    <version>0.7.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Dropwizard Project</name>
     <url>${dropwizard.url}</url>
@@ -83,7 +83,7 @@
         <connection>scm:git:git@github.com:cvent/dropwizard.git</connection>
         <developerConnection>scm:git:git@github.com:cvent/dropwizard.git</developerConnection>
         <url>http://github.com/cvent/dropwizard/</url>
-        <tag>v0.7.0.1</tag>
+        <tag>HEAD</tag>
     </scm>
     
 
@@ -118,12 +118,12 @@
         <snapshotRepository>
             <id>cvent-repo</id>
             <name>Cvent Snapshots Repo</name>
-            <url>http://hq04hqnug001:8081/nexus/content/repositories/snapshots/</url>
+            <url>http://hq04hqnug001.cvent.net:8081/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
         <repository>
             <id>cvent-repo</id>
             <name>Cvent Releases Repo</name>
-            <url>http://hq04hqnug001:8081/nexus/content/repositories/releases/</url>
+            <url>http://hq04hqnug001.cvent.net:8081/nexus/content/repositories/releases/</url>
         </repository>
     </distributionManagement>
 
