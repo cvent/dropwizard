@@ -86,9 +86,9 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
     }
 
     protected void cleanup() {
-        if (configuration != null) {
-            configuration.getLoggingFactory().stop();
-        }
+        // if (configuration != null) {
+        //     configuration.getLoggingFactory().stop();
+        // }
     }
 
     /**
