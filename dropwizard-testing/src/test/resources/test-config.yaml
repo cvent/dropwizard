@@ -8,5 +8,3 @@ server:
       port: 0
   requestLog:
     appenders: []
-logging:
-  appenders: []
