@@ -28,7 +28,4 @@
             <version>2.2.6</version>
         </dependency>
     </dependencies>
-    <scm>
-        <tag>HEAD</tag>
-    </scm>
 </project>

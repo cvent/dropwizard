@@ -33,7 +33,4 @@
             <version>2.3</version>
         </dependency>
     </dependencies>
-    <scm>
-        <tag>HEAD</tag>
-    </scm>
 </project>

@@ -39,6 +39,3 @@
         </dependency>
     </dependencies>
 </project>
-    <scm>
-        <tag>HEAD</tag>
-    </scm>

@@ -23,7 +23,4 @@
             <version>${project.version}</version>
         </dependency>
     </dependencies>
-    <scm>
-        <tag>HEAD</tag>
-    </scm>
 </project>

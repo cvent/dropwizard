@@ -74,7 +74,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    <scm>
-        <tag>HEAD</tag>
-    </scm>
 </project>

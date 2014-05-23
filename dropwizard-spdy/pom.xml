@@ -31,7 +31,4 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-    <scm>
-        <tag>HEAD</tag>
-    </scm>
 </project>

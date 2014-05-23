@@ -51,7 +51,4 @@
             </testResource>
         </testResources>
     </build>
-    <scm>
-        <tag>HEAD</tag>
-    </scm>
 </project>

@@ -29,7 +29,4 @@
             </exclusions>
         </dependency>
     </dependencies>
-    <scm>
-        <tag>HEAD</tag>
-    </scm>
 </project>
