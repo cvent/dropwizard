@@ -40,5 +40,5 @@
     </dependencies>
 </project>
     <scm>
-        <tag>v0.7.0.1</tag>
+        <tag>HEAD</tag>
     </scm>
