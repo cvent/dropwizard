@@ -32,7 +32,6 @@ public class UnhandledExceptionToJsonMapper implements ExceptionMapper<Exception
 
     private static final transient ObjectMapper MAPPER = new ObjectMapper();
     private static final String URI_NOT_FOUND = "URI not found";
-    private static final int UNPROCESSABLE_ENTITY = 422;
 
     @Override
     public Response toResponse(final Exception exception) {
