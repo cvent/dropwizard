@@ -1,9 +1,17 @@
 package io.dropwizard.jersey.errors;
 
 public class ErrorMessage {
-    private final String message;
+
+    private String message;
+
+    public ErrorMessage() {
+    }
 
     public ErrorMessage(String message) {
+        this.message = message;
+    }
+
+    public void setMessage(String message) {
         this.message = message;
     }
 
