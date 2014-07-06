@@ -4,6 +4,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.net.SyslogAppender;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
+import ch.qos.logback.core.AsyncAppenderBase;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import org.junit.Test;
 
@@ -43,5 +44,17 @@ public class SyslogAppenderFactoryTest {
 
         assertThat(appender.getSuffixPattern())
                 .matches("^MyApplication\\[\\d+\\].+");
+    }
+
+    @Test
+    public void stackTracePatternCanBeSet() throws Exception {
+        SyslogAppenderFactory syslogAppenderFactory = new SyslogAppenderFactory();
+        syslogAppenderFactory.setStackTracePrefix("--->");
+        AsyncAppender wrapper = (AsyncAppender) syslogAppenderFactory.build(
+                new LoggerContext(), "MyApplication", null);
+        SyslogAppender delegate = (SyslogAppender) wrapper.getDelegate();
+
+        assertThat(delegate.getStackTracePattern())
+                .isEqualTo("--->");
     }
 }

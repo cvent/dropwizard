@@ -6,6 +6,7 @@ import com.codahale.metrics.httpclient.InstrumentedHttpClient;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.params.AllClientPNames;
@@ -42,16 +43,31 @@ public class HttpClientBuilder {
     };
 
     private final MetricRegistry metricRegistry;
+    private String environmentName;
     private HttpClientConfiguration configuration = new HttpClientConfiguration();
     private DnsResolver resolver = new SystemDefaultDnsResolver();
+    private HttpRequestRetryHandler httpRequestRetryHandler;
     private SchemeRegistry registry = SchemeRegistryFactory.createSystemDefault();
+    private CredentialsProvider credentialsProvider = null;
 
     public HttpClientBuilder(MetricRegistry metricRegistry) {
         this.metricRegistry = metricRegistry;
     }
 
     public HttpClientBuilder(Environment environment) {
-        this.metricRegistry = environment.metrics();
+        this (environment.metrics());
+        name(environment.getName());
+    }
+
+    /**
+     * Use the given environment name. This is used in the user agent.
+     *
+     * @param environmentName  an environment name to use in the user agent.
+     * @return {@code this}
+     */
+    public HttpClientBuilder name(String environmentName) {
+        this.environmentName = environmentName;
+        return this;
     }
 
     /**
@@ -77,6 +93,17 @@ public class HttpClientBuilder {
     }
 
     /**
+     * Uses the {@link HttpRequestRetryHandler} for handling request retries.
+     *
+     * @param httpRequestRetryHandler an httpRequestRetryHandler
+     * @return {@code this}
+     */
+    public HttpClientBuilder using(HttpRequestRetryHandler httpRequestRetryHandler) {
+        this.httpRequestRetryHandler = httpRequestRetryHandler;
+        return this;
+    }
+    
+    /**
      * Use the given {@link SchemeRegistry} instance.
      *
      * @param registry    a {@link SchemeRegistry} instance
@@ -88,12 +115,23 @@ public class HttpClientBuilder {
     }
 
     /**
+     * Use the given {@link CredentialsProvider} instance.
+     *
+     * @param credentialsProvider    a {@link CredentialsProvider} instance
+     * @return {@code this}
+     */
+    public HttpClientBuilder using(CredentialsProvider credentialsProvider) {
+        this.credentialsProvider = credentialsProvider;
+        return this;
+    }
+
+    /**
      * Builds the {@link HttpClient}.
      *
      * @return an {@link HttpClient}
      */
     public HttpClient build(String name) {
-        final BasicHttpParams params = createHttpParams();
+        final BasicHttpParams params = createHttpParams(name);
         final InstrumentedClientConnManager manager = createConnectionManager(registry, name);
         final InstrumentedHttpClient client = new InstrumentedHttpClient(metricRegistry, manager, params, name);
         setStrategiesForClient(client);
@@ -128,9 +166,15 @@ public class HttpClientBuilder {
 
         if (configuration.getRetries() == 0) {
             client.setHttpRequestRetryHandler(NO_RETRIES);
+        } else if (httpRequestRetryHandler != null) {
+            client.setHttpRequestRetryHandler(httpRequestRetryHandler);
         } else {
             client.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(configuration.getRetries(),
                                                                                  false));
+        }
+
+        if (credentialsProvider != null) {
+            client.setCredentialsProvider(credentialsProvider);
         }
     }
 
@@ -139,7 +183,7 @@ public class HttpClientBuilder {
      *
      * @return a BasicHttpParams object from the HttpClientConfiguration
      */
-    protected BasicHttpParams createHttpParams() {
+    protected BasicHttpParams createHttpParams(String name) {
         final BasicHttpParams params = new BasicHttpParams();
 
         if (configuration.isCookiesEnabled()) {
@@ -147,6 +191,8 @@ public class HttpClientBuilder {
         } else {
             params.setParameter(AllClientPNames.COOKIE_POLICY, CookiePolicy.IGNORE_COOKIES);
         }
+
+        params.setParameter(AllClientPNames.USER_AGENT, createUserAgent(name));
 
         final Integer timeout = (int) configuration.getTimeout().toMilliseconds();
         params.setParameter(AllClientPNames.SO_TIMEOUT, timeout);
@@ -159,6 +205,18 @@ public class HttpClientBuilder {
         params.setParameter(AllClientPNames.STALE_CONNECTION_CHECK, Boolean.FALSE);
 
         return params;
+    }
+
+    /**
+     * Create a user agent string using the configured user agent if defined, otherwise
+     * using a combination of the environment name and this client name
+     *
+     * @param name the name of this client
+     * @return the user agent string to be used by this client
+     */
+    protected String createUserAgent(String name) {
+        final String defaultUserAgent = environmentName == null ? name : String.format("%s (%s)", environmentName, name);
+        return configuration.getUserAgent().or(defaultUserAgent);
     }
 
     /**

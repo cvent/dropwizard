@@ -1,12 +1,17 @@
 package io.dropwizard.client;
 
 import com.codahale.metrics.MetricRegistry;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.util.Duration;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.params.AllClientPNames;
 import org.apache.http.client.params.CookiePolicy;
 import org.apache.http.conn.DnsResolver;
@@ -24,6 +29,7 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -57,6 +63,15 @@ public class HttpClientBuilderTest {
 
         assertThat(connectionManager.getDefaultMaxPerRoute())
                 .isEqualTo(413);
+    }
+
+    @Test
+    public void setsTheUserAgent() {
+        configuration.setUserAgent(Optional.of("qwerty"));
+
+        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
+        assertThat(client.getParams().getParameter(AllClientPNames.USER_AGENT))
+                .isEqualTo("qwerty");
     }
 
     @Test
@@ -210,5 +225,45 @@ public class HttpClientBuilderTest {
 
         assertThat(client.getConnectionManager().getSchemeRegistry())
                 .isEqualTo(registry);
+    }
+    
+    @Test
+    public void usesACustomHttpRequestRetryHandler() throws Exception {
+        HttpRequestRetryHandler customHandler = new HttpRequestRetryHandler() {
+            @Override
+            public boolean retryRequest(IOException exception, int executionCount, HttpContext context) {
+                return false;
+            }
+        };
+        HttpClientConfiguration config = new HttpClientConfiguration();
+        config.setRetries(1);
+        AbstractHttpClient client = (AbstractHttpClient) builder.using(config).using(customHandler).build("test");
+        
+        assertThat(client.getHttpRequestRetryHandler()).isEqualTo(customHandler);
+    }
+
+    @Test
+    public void usesCredentialsProvider() throws Exception {
+        CredentialsProvider credentialsProvider = new CredentialsProvider() {
+            @Override
+            public void setCredentials(AuthScope authscope, Credentials credentials) {
+
+            }
+
+            @Override
+            public Credentials getCredentials(AuthScope authscope) {
+                return null;
+            }
+
+            @Override
+            public void clear() {
+
+            }
+        };
+        HttpClientConfiguration config = new HttpClientConfiguration();
+        config.setRetries(1);
+        AbstractHttpClient client = (AbstractHttpClient) builder.using(config).using(credentialsProvider).build("test");
+
+        assertThat(client.getCredentialsProvider()).isEqualTo(credentialsProvider);
     }
 }

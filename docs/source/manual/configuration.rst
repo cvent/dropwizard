@@ -27,32 +27,38 @@ Servers
 All
 ----
 
-====================== ===========  ===========
-Name                   Default      Description
-====================== ===========  ===========
-type                   default      - default
-                                    - simple	
-maxThreads             1024         The maximum number of threads to use for requests.
-minThreads             8            The minimum number of threads to use for requests.
-maxQueuedRequests      1024         The maximum number of requests to queue before blocking the acceptors.
-idleThreadTimeout      1 minute     The amount of time a worker thread can be idle before being stopped.
-nofileSoftLimit        (none)       The number of open file descriptors before a soft error is issued.
-                                    Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
-nofileHardLimit        (none)       The number of open file descriptors before a hard error is issued.
-                                    Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
-gid                    (none)       The group ID to switch to once the connectors have started.
-                                    Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
-uid                    (none)       The user ID to switch to once the connectors have started.
-                                    Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
-user                   (none)       The username to switch to once the connectors have started.
-                                    Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
-group                  (none)       The group to switch to once the connectors have started.
-                                    Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
-umask                  (none)       The umask to switch to once the connectors have started.
-                                    Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
-startsAsRoot           (none)       Whether or not the Dropwizard application is started as a root user.
-                                    Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
-====================== ===========  ===========
+====================== ===============================================  =============================================================================
+Name                   Default                                          Description
+====================== ===============================================  =============================================================================
+type                   default                                          - default
+                                                                        - simple
+maxThreads             1024                                             The maximum number of threads to use for requests.
+minThreads             8                                                The minimum number of threads to use for requests.
+maxQueuedRequests      1024                                             The maximum number of requests to queue before blocking
+                                                                        the acceptors.
+idleThreadTimeout      1 minute                                         The amount of time a worker thread can be idle before
+                                                                        being stopped.
+nofileSoftLimit        (none)                                           The number of open file descriptors before a soft error is issued.
+                                                                        Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
+nofileHardLimit        (none)                                           The number of open file descriptors before a hard error is issued.
+                                                                        Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
+gid                    (none)                                           The group ID to switch to once the connectors have started.
+                                                                        Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
+uid                    (none)                                           The user ID to switch to once the connectors have started.
+                                                                        Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
+user                   (none)                                           The username to switch to once the connectors have started.
+                                                                        Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
+group                  (none)                                           The group to switch to once the connectors have started.
+                                                                        Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
+umask                  (none)                                           The umask to switch to once the connectors have started.
+                                                                        Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
+startsAsRoot           (none)                                           Whether or not the Dropwizard application is started as a root user.
+                                                                        Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
+shutdownGracePeriod    30 seconds                                       The maximum time to wait for Jetty, and all Managed instances,
+                                                                        to cleanly shutdown before forcibly terminating them.
+allowedMethods         ``GET``, ``POST``, ``PUT``, ``DELETE``,          The set of allowed HTTP methods. Others will be rejected with a
+                       ``HEAD``, ``OPTIONS``, ``PATCH``                 405 Method Not Allowed response.
+====================== ===============================================  =============================================================================
 
 
 .. _man-configuration-gzip:
@@ -328,10 +334,17 @@ supportedProtocols               (none)              A list of protocols (e.g., 
                                                      other protocols will be refused.
 supportedCipherSuites            (none)              A list of cipher suites (e.g., ``TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256``) which
                                                      are supported. All other cipher suites will be refused
+excludedCipherSuites             (none)              A list of cipher suites (e.g., ``TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256``) which
+                                                     are excluded. These cipher suites will be refused and exclusion takes higher 
+                                                     precedence than inclusion, such that if a cipher suite is listed in 
+                                                     ``supportedCipherSuites`` and ``excludedCipherSuitse``, the cipher suite will be
+                                                     excluded. To verify that the proper cipher suites are being whitelisted and
+                                                     blacklisted, it is recommended to use the tool `sslyze`_.
 allowRenegotiation               true                Whether or not TLS renegotiation is allowed.
 endpointIdentificationAlgorithm  (none)              Which endpoint identification algorithm, if any, to use during the TLS handshake.
 ================================ ==================  ======================================================================================
 
+.. _sslyze: https://github.com/iSECPartners/sslyze
 
 .. _man-configuration-spdy:
 
@@ -469,6 +482,7 @@ Syslog
           port: 514
           facility: local0
           threshold: ALL
+          stackTracePrefix: \t
           logFormat: # TODO
 
 
@@ -483,8 +497,10 @@ facility                     local0       The syslog facility to use. Can be eit
                                           ``local1``, ``local2``, ``local3``, ``local4``, ``local5``,
                                           ``local6``, or ``local7``.
 threshold                    ALL          The lowest level of events to write to the file.
-logFormat                    defaultThe   Logback pattern with which events will be formatted. See
+logFormat                    default      The Logback pattern with which events will be formatted. See
                                           the Logback_ documentation for details.
+stackTracePrefix             \t           The prefix to use when writing stack trace lines (these are sent
+                                          to the syslog server separately from the main message)
 ============================ ===========  ==================================================================================================
 
 
@@ -537,7 +553,7 @@ durationUnit           milliseconds   The unit to report durations as. Overrides
 rateUnit               seconds        The unit to report rates as. Overrides per-metric rate units.
 excludes               (none)         Metrics to exclude from reports, by name. When defined, matching metrics will not be reported.
 includes               (all)          Metrics to include in reports, by name. When defined, only these metrics will be reported.
-frequency              1 second       The frequency to report metrics. Overrides the default.
+frequency              (none)         The frequency to report metrics. Overrides the default.
 ====================== =============  ===========
 
 
@@ -713,4 +729,80 @@ logger                 metrics          The name of the logger to write metrics 
 markerName             (none)           The name of the marker to mark logged metrics with.
 ====================== ===============  ====================================================================================================
 
+
+.. _man-configuration-clients:
+
+Clients
+=========
+
+.. _man-configuration-clients-http:
+
+HttpClient
+-----
+
+See HttpClientConfiguration_  for more options.
+
+.. _HttpClientConfiguration:  https://github.com/dropwizard/dropwizard/blob/master/dropwizard-client/src/main/java/io/dropwizard/client/HttpClientConfiguration.java
+
+.. code-block:: yaml
+
+    httpClient:
+      timeout: 500ms
+      connectionTimeout: 500ms
+      timeToLive: 1h
+      cookiesEnabled: false
+      maxConnections: 1024
+      maxConnectionsPerRoute: 1024
+      keepAlive: 0ms
+      retries: 0
+      userAgent: <application name> (<client name>)
+
+
+======================= ======================================  =============================================================================
+Name                    Default                                 Description
+======================= ======================================  =============================================================================
+timeout                 500 milliseconds                        The maximum idle time for a connection, once established.
+connectionTimeout       500 milliseconds                        The maximum time to wait for a connection to open.
+timeToLive              1 hour                                  The maximum time a pooled connection can stay idle (not leased to any thread)
+                                                                before it is shut down.
+cookiesEnabled          false                                   Whether or not to enable cookies.
+maxConnections          1024                                    The maximum number of concurrent open connections.
+maxConnectionsPerRoute  1024                                    The maximum number of concurrent open connections per route.
+keepAlive               0 milliseconds                          The maximum time a connection will be kept alive before it is reconnected. If set
+                                                                to 0, connections will be immediately closed after every request/response.
+retries                 0                                       The number of times to retry failed requests. Requests are only
+                                                                retried if they throw an exception other than ``InterruptedIOException``,
+                                                                ``UnknownHostException``, ``ConnectException``, or ``SSLException``.
+userAgent               ``applicationName`` (``clientName``)    The User-Agent to send with requests.
+======================= ======================================  =============================================================================
+
+
+.. _man-configuration-clients-jersey:
+
+JerseyClient
+-----
+
+Extends the attributes that are available to :ref:`http clients <man-configuration-clients-http>`
+
+See JerseyClientConfiguration_ and HttpClientConfiguration_ for more options.
+
+.. _JerseyClientConfiguration:  https://github.com/dropwizard/dropwizard/blob/master/dropwizard-client/src/main/java/io/dropwizard/client/JerseyClientConfiguration.java
+
+.. code-block:: yaml
+
+    jerseyClient:
+      minThreads: 1
+      maxThreads: 128
+      gzipEnabled: true
+      gzipEnabledForRequests: true
+
+
+======================= ==================  ===================================================================================================
+Name                    Default             Description
+======================= ==================  ===================================================================================================
+minThreads              1                   The minimum number of threads in the pool used for asynchronous requests.
+maxThreads              128                 The maximum number of threads in the pool used for asynchronous requests.
+gzipEnabled             true                Adds an Accept-Encoding: gzip header to all requests, and enables automatic gzip decoding of responses.
+gzipEnabledForRequests  true                Adds a Content-Encoding: gzip header to all requests, and enables automatic gzip encoding of requests.
+======================= ==================  ===================================================================================================
 

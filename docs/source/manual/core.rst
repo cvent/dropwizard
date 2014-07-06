@@ -266,7 +266,7 @@ resource instances, etc., and adding them to the given ``Environment`` class:
         final Thingy thingy = config.getThingyFactory().build();
 
         environment.jersey().register(new ThingyResource(thingy));
-        environment.healthChecks().register(new ThingyHealthCheck(thingy));
+        environment.healthChecks().register("thingy", new ThingyHealthCheck(thingy));
     }
 
 It's important to keep the ``run`` method clean, so if creating an instance of something is
@@ -287,7 +287,6 @@ to the database:
         private final Database database;
 
         public DatabaseHealthCheck(Database database) {
-            super("database");
             this.database = database;
         }
 
@@ -305,14 +304,13 @@ You can then add this health check to your application's environment:
 
 .. code-block:: java
 
-    environment.healthChecks().register(new DatabaseHealthCheck(database));
+    environment.healthChecks().register("database", new DatabaseHealthCheck(database));
 
 By sending a ``GET`` request to ``/healthcheck`` on the admin port you can run these tests and view
 the results::
 
     $ curl http://dw.example.com:8081/healthcheck
-    * deadlocks: OK
-    * database: OK
+    {"deadlocks":{"healthy":true},"database":{"healthy":true}}
 
 If all health checks report success, a ``200 OK`` is returned. If any fail, a
 ``500 Internal Server Error`` is returned with the error messages and exception stack traces (if an
@@ -414,6 +412,19 @@ page.
         bootstrap.addBundle(new AssetsBundle("/assets/", "/"));
     }
 
+When an ``AssetBundle`` is added to the application, it is registered as a servlet
+using a default name of ``assets``. If the application needs to have multiple ``AssetBundle``
+instances, the extended constructor should be used to specify a unique name for the ``AssetBundle``.
+
+.. code-block:: java
+
+    @Override
+    public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {
+        bootstrap.addBundle(new AssetsBundle("/assets/css", "/css", null, "css"));
+        bootstrap.addBundle(new AssetsBundle("/assets/js", "/js", null, "js"));
+        bootstrap.addBundle(new AssetsBundle("/assets/fonts", "/fonts", null, "fonts"));
+    }
+
 .. _man-core-commands:
 
 Commands
@@ -451,7 +462,31 @@ Tasks
 A ``Task`` is a run-time action your application provides access to on the administrative port via HTTP.
 All Dropwizard applications start with the ``gc`` task, which explicitly triggers the JVM's garbage
 collection. (This is useful, for example, for running full garbage collections during off-peak times
-or while the given application is out of rotation.)
+or while the given application is out of rotation.) The execute method of a ``Task`` can be annotated
+with ``@Timed``, ``@Metered``, and ``@ExceptionMetered``. Dropwizard will automatically
+record runtime information about your tasks. Here's a basic task class:
+
+.. code-block:: java
+
+    public class TruncateDatabaseTask extends Task {
+        private final Database database;
+
+        public TruncateDatabaseTask(Database database) {
+            super('truncate');
+            this.database = database;
+        }
+
+          @Override
+        public void execute(ImmutableMultimap<String, String> parameters, PrintWriter output) throws Exception {
+            this.database.truncate();
+        }
+    }
+
+You can then add this task to your application's environment:
+
+.. code-block:: java
+
+    environment.admin().addTask(new TruncateDatabaseTask(database));
 
 Running a task can be done by sending a ``POST`` request to ``/tasks/{task-name}`` on the admin
 port. For example::
@@ -521,6 +556,10 @@ A few items of note:
 * You can even pull out full exception stack traces, plus the accompanying log message::
 
     tail -f dw.log | grep -B 1 '^\!'
+
+* The `!` prefix does *not* apply to syslog appenders, as stack traces are sent separately from the main message.
+  Instead, `\t` is used (this is the default value of the `SyslogAppender` that comes with Logback). This can be
+  configured with the `stackTracePrefix` option when defining your appender.
 
 Configuration
 -------------
@@ -658,19 +697,21 @@ tests:
 
     public class MyApplicationTest {
         private final Environment environment = mock(Environment.class);
+        private final JerseyEnvironment jersey = mock(JerseyEnvironment.class);
         private final MyApplication application = new MyApplication();
         private final MyConfiguration config = new MyConfiguration();
 
         @Before
         public void setup() throws Exception {
             config.setMyParam("yay");
+            when(environment.jersey()).thenReturn(jersey);
         }
 
         @Test
         public void buildsAThingResource() throws Exception {
             application.run(config, environment);
 
-            verify(environment).jersey().register(any(ThingResource.class));
+            verify(jersey).register(any(ThingResource.class));
         }
     }
 
@@ -788,8 +829,12 @@ Methods
 -------
 
 Methods on a resource class which accept incoming requests are annotated with the HTTP methods they
-handle: ``@GET``, ``@POST``, ``@PUT``, ``@DELETE``, ``@HEAD``, ``@OPTIONS``, and even
-``@HttpMethod`` for arbitrary new methods.
+handle: ``@GET``, ``@POST``, ``@PUT``, ``@DELETE``, ``@HEAD``, ``@OPTIONS``, ``@PATCH``.
+
+Support for arbitrary new methods can be added via the ``@HttpMethod`` annotation. They also must
+to be added to the :ref:`list of allowed methods <man-configuration-all>`. This means, by default,
+methods such as ``CONNECT`` and ``TRACE`` are blocked, and will return a ``405 Method Not Allowed``
+response.
 
 If a request comes in which matches a resource class's path but has a method which the class doesn't
 support, Jersey will automatically return a ``405 Method Not Allowed`` to the client.
@@ -902,7 +947,7 @@ If your resource class unintentionally throws an exception, Dropwizard will log 
 response.
 
 If your resource class needs to return an error to the client (e.g., the requested record doesn't
-exist), you have two options: throw a sublcass of ``Exception`` or restructure your method to
+exist), you have two options: throw a subclass of ``Exception`` or restructure your method to
 return a ``Response``.
 
 If at all possible, prefer throwing ``Exception`` instances to returning
@@ -910,7 +955,7 @@ If at all possible, prefer throwing ``Exception`` instances to returning
 
 If you throw a subclass of ``WebApplicationException`` jersey will map that to a defined response.
 
-If you want more control, you can also delcare JerseyProviders in your Environment to map Exceptions
+If you want more control, you can also declare JerseyProviders in your Environment to map Exceptions
 to certain responses by calling ``JerseyEnvironment#register(Object)`` with an implementation of 
 javax.ws.rs.ext.ExceptionMapper.
 e.g. Your resource throws an InvalidArgumentException, but the response would be 400, bad request.
@@ -1170,6 +1215,8 @@ If your application happens to return lots of information, you may get a big per
 bump by using streaming output. By returning an object which implements Jersey's ``StreamingOutput``
 interface, your method can stream the response entity in a chunk-encoded output stream. Otherwise,
 you'll need to fully construct your return value and *then* hand it off to be sent to the client.
+
+
 .. _man-core-representations-html:
 
 HTML Representations
@@ -1190,6 +1237,83 @@ input and output formats by creating classes which implement Jersey's ``MessageB
 instances of them (or their classes if they depend on Jersey's ``@Context`` injection) to your
 application's ``Environment`` on initialization.
 
+.. _man-core-jersey-filters:
+
+Jersey filters
+--------------
+
+There might be cases when you want to filter out requests or modify them before they reach your Resources. Jersey
+provides you with the means to do so. If you want to stop the request from reaching your resources, throw a web-application
+``WebApplicationException``, if you want to modify the request or let it pass through the filter, return it.
+
+.. code-block:: java
+
+    public class DateNotSpecifiedFilter implements ContainerRequestFilter {
+
+        @Context ExtendedUriInfo extendedUriInfo;
+
+        @Override
+        public ContainerRequest filter(ContainerRequest request) {
+            boolean methodNeedsDateHeader = extendedUriInfo.getMatchedMethod().isAnnotationPresent(DateRequired.class);
+            String dateHeader = request.getHeaderValue(HttpHeaders.DATE);
+
+            if (methodNeedsDateHeader && dateHeader == null) {
+                Exception cause = new IllegalArgumentException("Date Header was not specified");
+                throw new WebApplicationException(cause, Response.Status.BAD_REQUEST);
+            } else {
+                return request;
+            }
+        }
+    }
+
+This example checks the request for the "Date" header, and denies the request if was ommitted and the method this request would call has a certain annotation present.
+You can then register this filter in your Application class, like so:
+
+.. code-block:: java
+
+    environment.jersey().getResourceConfig().getContainerRequestFilters().add(new DateNotSpecifiedFilter());
+
+
+.. _man-core-servlet-filters:
+
+Servlet filters
+---------------
+
+Another way to create filters is by creating servlet filters. They offer a way to to register filters that apply both to servlet requests as well as resource requests.
+Jetty comes with a few `bundled`_  filters which may already suit your needs. If you want to create your own filter,
+this example demonstrates a servlet filter analogous to the previous example:
+
+.. _bundled: http://www.eclipse.org/jetty/documentation/current/advanced-extras.html
+
+.. code-block:: java
+
+    public class DateNotSpecifiedServletFilter implements javax.servlet.Filter {
+        // Other methods in interface ommited for brevity
+
+        @Override
+        public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+            if (request instanceof HttpServletRequest) {
+                String dateHeader = ((HttpServletRequest) request).getHeader(HttpHeaders.DATE);
+
+                if (dateHeader == null) {
+                    chain.doFilter(request, response); // This signals that the request should pass this filter
+                } else {
+                    HttpServletResponse httpResponse = (HttpServletResponse) response;
+                    httpResponse.setStatus(HttpStatus.BAD_REQUEST_400);
+                    httpResponse.getWriter().print("Date Header was not specified");
+                }
+            }
+        }
+    }
+
+
+This servlet filter can then be registered in your Application class by wrapping it in ``FilterHolder`` and adding it to the application context together with a
+specification for which paths this filter should active. Here's an example:
+
+.. code-block:: java
+
+        environment.servlets().addFilter("DateHeaderServletFilter", new DateHeaderServletFilter())
+                              .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
 .. _man-glue-detail:
 
 How it's glued together
