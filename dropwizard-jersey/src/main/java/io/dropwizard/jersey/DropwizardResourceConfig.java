@@ -13,7 +13,6 @@ import com.sun.jersey.api.model.AbstractResourceMethod;
 import com.sun.jersey.api.model.AbstractSubResourceLocator;
 import com.sun.jersey.api.model.AbstractSubResourceMethod;
 import com.sun.jersey.server.impl.modelapi.annotation.IntrospectionModeller;
-import io.dropwizard.jersey.UnhandledExceptionToJsonMapper;
 import io.dropwizard.jersey.caching.CacheControlledResourceMethodDispatchAdapter;
 import io.dropwizard.jersey.errors.LoggingExceptionMapper;
 import io.dropwizard.jersey.guava.OptionalQueryParamInjectableProvider;
@@ -23,8 +22,6 @@ import io.dropwizard.jersey.validation.ConstraintViolationExceptionMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.Path;
-import javax.ws.rs.ext.Provider;
 import java.util.List;
 import java.util.Map;
 
