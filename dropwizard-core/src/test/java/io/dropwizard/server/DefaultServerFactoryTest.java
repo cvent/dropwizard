@@ -114,9 +114,6 @@ public class DefaultServerFactoryTest {
 
         server.start();
 
-        //Sleep for 10 to give the server time to start
-        Thread.sleep(10000L);
-        
         final int port = ((AbstractNetworkConnector) server.getConnectors()[0]).getLocalPort();
 
         Future<String> futureResult = executor.submit(new Callable<String>() {
