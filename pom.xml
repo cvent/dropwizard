@@ -200,7 +200,7 @@
     </distributionManagement>
 
     <profiles>
-        <profile>
+        <!--<profile>
             <id>release-sign-artifacts</id>
             <activation>
                 <property>
@@ -227,6 +227,7 @@
                 </plugins>
             </build>
         </profile>
+        -->
         <profile>
             <id>java8-disable-strict-javadoc-and-findbugs</id>
             <activation>
