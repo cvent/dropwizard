@@ -298,14 +298,16 @@
                 </configuration>
             </plugin>
             <!-- we can't run tests in parallel until http://bugzilla.slf4j.org/show_bug.cgi?id=176 is fixed -->
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-surefire-plugin</artifactId>-->
-                <!--<version>2.14.1</version>-->
-                <!--<configuration>-->
-                    <!--<parallel>classes</parallel>-->
-                    <!--</configuration>-->
-                <!--</plugin>-->
+              <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.17</version>
+                <configuration>
+                    <forkCount>1</forkCount>
+                    <reuseForks>false</reuseForks>
+                    <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
+                </configuration>
+              </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
