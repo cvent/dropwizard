@@ -109,7 +109,7 @@ public class DefaultServerFactoryTest {
                 executor.shutdownNow();
                 return null;
             }
-        }, 10, TimeUnit.SECONDS);
+        }, 5, TimeUnit.SECONDS);
 
 
         server.start();
@@ -147,7 +147,7 @@ public class DefaultServerFactoryTest {
                 shutdownInvoked.countDown();
                 break;
             }
-            Thread.sleep(10);
+            Thread.sleep(5);
         }
 
         String result = futureResult.get();

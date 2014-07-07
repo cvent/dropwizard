@@ -9,16 +9,13 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.sun.jersey.api.NotFoundException;
 import java.net.URI;
-import org.eclipse.jetty.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * A generic exception mapper that converts exception messages into JSON format
@@ -79,14 +76,13 @@ public class UnhandledExceptionToJsonMapper implements ExceptionMapper<Exception
         if (exception.getMessage() == null && exception instanceof WebApplicationException) {
             WebApplicationException e = (WebApplicationException) exception;
             if (e.getResponse() != null) {
-                errorInfo = new ErrorInfo(HttpStatus.getMessage(e.getResponse().getStatus()));
+                errorInfo = new ErrorInfo(Integer.toString(e.getResponse().getStatus()));
             } else {
                 return null;
             }
         } else {
             errorInfo = new ErrorInfo(exception.getMessage());
         }
-        
 
         try {
             return MAPPER.writeValueAsString(errorInfo);

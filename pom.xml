@@ -150,20 +150,19 @@
     <scm>
         <connection>scm:git:git@github.com:cvent/dropwizard.git</connection>
         <developerConnection>scm:git:git@github.com:cvent/dropwizard.git</developerConnection>
-        <url>http://github.com/cvent/dropwizard/</url>
-        <tag>v0.7.1.3</tag>
+        <url>http://github.com/cvent/dropwizard</url>
+        <tag>HEAD</tag>
     </scm>
-    
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/cvent/dropwizard/issues</url>
+        <url>https://github.com/dropwizard/dropwizard/issues</url>
     </issueManagement>
 
-    <!--    <ciManagement>
+    <ciManagement>
         <system>Travis CI</system>
         <url>https://travis-ci.org/dropwizard/dropwizard</url>
-    </ciManagement> -->
+    </ciManagement>
 
     <mailingLists>
         <mailingList>
@@ -182,16 +181,30 @@
         </mailingList>
     </mailingLists>
 
+    <repositories>
+        <repository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <distributionManagement>
         <snapshotRepository>
-            <id>cvent-repo</id>
-            <name>Cvent Snapshots Repo</name>
-            <url>http://hq04hqnug001.cvent.net:8081/nexus/content/repositories/snapshots/</url>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
         <repository>
-            <id>cvent-repo</id>
-            <name>Cvent Releases Repo</name>
-            <url>http://hq04hqnug001.cvent.net:8081/nexus/content/repositories/releases/</url>
+            <id>sonatype-nexus-staging</id>
+            <name>Nexus Release Repository</name>
+            <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
         <site>
             <id>dropwizard.io</id>
@@ -200,7 +213,7 @@
     </distributionManagement>
 
     <profiles>
-        <!--<profile>
+        <profile>
             <id>release-sign-artifacts</id>
             <activation>
                 <property>
@@ -227,7 +240,6 @@
                 </plugins>
             </build>
         </profile>
-        -->
         <profile>
             <id>java8-disable-strict-javadoc-and-findbugs</id>
             <activation>
@@ -239,7 +251,7 @@
             </properties>
         </profile>
     </profiles>
-    
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -298,17 +310,14 @@
                 </configuration>
             </plugin>
             <!-- we can't run tests in parallel until http://bugzilla.slf4j.org/show_bug.cgi?id=176 is fixed -->
-              <!-- <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.17</version>
-                <configuration>
-                    <forkMode>once</forkMode>
-                    <forkCount>1</forkCount>
-                    <reuseForks>true</reuseForks>
-                    <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
-                </configuration>
-              </plugin> -->
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-surefire-plugin</artifactId>-->
+                <!--<version>2.14.1</version>-->
+                <!--<configuration>-->
+                    <!--<parallel>classes</parallel>-->
+                    <!--</configuration>-->
+                <!--</plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
