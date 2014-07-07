@@ -206,10 +206,6 @@
             <name>Cvent Releases Repo</name>
             <url>http://hq04hqnug001.cvent.net:8081/nexus/content/repositories/releases/</url>
         </repository>
-        <site>
-            <id>dropwizard.io</id>
-            <url>${dropwizard.url}</url>
-        </site>
     </distributionManagement>
 
     <profiles>
