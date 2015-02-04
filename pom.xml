@@ -196,16 +196,16 @@
     </repositories>
 
     <distributionManagement>
-        <snapshotRepository>
-            <id>cvent-repo</id>
-            <name>Cvent Snapshots Repo</name>
-            <url>http://hq04hqnug001.cvent.net:8081/nexus/content/repositories/snapshots/</url>
-        </snapshotRepository>
         <repository>
             <id>cvent-repo</id>
             <name>Cvent Releases Repo</name>
-            <url>http://hq04hqnug001.cvent.net:8081/nexus/content/repositories/releases/</url>
+            <url>http://nexus-01.cvent.net:8081/nexus/content/repositories/releases/</url>
         </repository>
+        <snapshotRepository>
+            <id>cvent-repo</id>
+            <name>Cvent Snapshots Repo</name>
+            <url>http://nexus-01.cvent.net:8081/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
     </distributionManagement>
 
     <profiles>
