@@ -33,6 +33,10 @@ public class FuzzyEnumModule extends Module {
 
         private final Enum<?>[] constants;
         private final List<String> acceptedValues;
+        
+        //These values are only provided if the @JsonCreator annotation is provided
+        private DeserializationConfig config;
+        private AnnotatedMethod am;
 
         @SuppressWarnings("unchecked")
         protected PermissiveEnumDeserializer(Class<Enum<?>> clazz) {
@@ -44,8 +48,20 @@ public class FuzzyEnumModule extends Module {
             }
         }
 
-        @Override
+        protected PermissiveEnumDeserializer(Class<?> type,
+                DeserializationConfig config,
+                AnnotatedMethod am) {
+            super(type);
+            this.constants = ((Class<Enum<?>>) handledType()).getEnumConstants();
+            this.acceptedValues = Lists.newArrayList();
+            for (Enum<?> constant : constants) {
+                acceptedValues.add(constant.name());
+            }
+            this.config = config;
+            this.am = am;
+        }
 
+        @Override
         public Enum<?> deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
             final String text = CharMatcher.WHITESPACE
                     .removeFrom(jp.getText())
@@ -62,7 +78,14 @@ public class FuzzyEnumModule extends Module {
                 }
             }
 
-            throw ctxt.mappingException(text + " was not one of " + acceptedValues);
+            //If the config was provided then we're assuming that the class we're deserializing had @JsonCreator
+            //annotation so we'll try to deserialize with that if the we weren't able to find the enum yet.
+            if (config != null) {
+                return (Enum<?>) EnumDeserializer.deserializerForCreator(config, this.handledType(), am).deserialize(jp,
+                        ctxt);
+            } else {
+                throw ctxt.mappingException(text + " was not one of " + acceptedValues);
+            }
         }
     }
 
@@ -79,7 +102,7 @@ public class FuzzyEnumModule extends Module {
                 for (AnnotatedMethod am : factoryMethods) {
                     final JsonCreator creator = am.getAnnotation(JsonCreator.class);
                     if (creator != null) {
-                        return EnumDeserializer.deserializerForCreator(config, type, am);
+                        return new PermissiveEnumDeserializer(type, config, am);
                     }
                 }
             }
