@@ -40,7 +40,7 @@ import javax.validation.ValidatorFactory;
  */
 public class Bootstrap<T extends Configuration> {
     private final Application<T> application;
-    private final ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
     private final List<Bundle> bundles;
     private final List<ConfiguredBundle<? super T>> configuredBundles;
     private final List<Command> commands;
@@ -81,6 +81,15 @@ public class Bootstrap<T extends Configuration> {
         this.configurationFactoryFactory = new DefaultConfigurationFactoryFactory<T>();
     }
 
+    /**
+     * A hack that allows us to override the object mapper if needed.
+     * 
+     * @param mapper    The object mapper we want to override the default
+     */
+    public void overrideObjectMapper(ObjectMapper mapper) {
+        this.objectMapper = mapper;
+    }
+    
     /**
      * Returns the bootstrap's {@link Application}.
      */
