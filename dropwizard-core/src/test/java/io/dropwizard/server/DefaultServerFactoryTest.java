@@ -33,7 +33,6 @@ import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.NetworkConnector;
 import org.eclipse.jetty.server.Server;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.codahale.metrics.MetricRegistry;
@@ -83,7 +82,6 @@ public class DefaultServerFactoryTest {
                 .contains(DefaultServerFactory.class);
     }
 
-    @Ignore
     @Test
     public void testGracefulShutdown() throws Exception {
         ObjectMapper objectMapper = Jackson.newObjectMapper();
