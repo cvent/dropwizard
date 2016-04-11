@@ -202,7 +202,7 @@ public class HttpClientBuilder {
         params.setParameter(AllClientPNames.CONNECTION_TIMEOUT, connectionTimeout);
 
         params.setParameter(AllClientPNames.TCP_NODELAY, Boolean.TRUE);
-        params.setParameter(AllClientPNames.STALE_CONNECTION_CHECK, Boolean.FALSE);
+        params.setParameter(AllClientPNames.STALE_CONNECTION_CHECK, Boolean.TRUE);
 
         return params;
     }

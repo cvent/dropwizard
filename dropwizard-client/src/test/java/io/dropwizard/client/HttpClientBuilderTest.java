@@ -208,7 +208,7 @@ public class HttpClientBuilderTest {
         final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
 
         assertThat(client.getParams().getBooleanParameter(AllClientPNames.STALE_CONNECTION_CHECK, true))
-                .isFalse();
+                .isTrue();
     }
 
     @Test
